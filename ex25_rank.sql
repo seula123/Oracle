@@ -66,4 +66,3 @@ SELECT * FROM
 		rank() OVER (PARTITION BY buseo ORDER BY basicpay desc) AS rnum
 	FROM tblinsa)
 	WHERE rnum =1;
-
