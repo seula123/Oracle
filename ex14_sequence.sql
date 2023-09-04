@@ -66,8 +66,8 @@ SELECT seqNum.nextVal FROM dual;
 DROP SEQUENCE seqTest;
 
 CREATE SEQUENCE seqTest
-            --INCREMENT BY -1;
-            --START WITH 10;
+            		--INCREMENT BY -1;
+           		 --START WITH 10;
 			--MAXVALUE 10
 			--CYCLE
 			CACHE 20;

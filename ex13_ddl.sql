@@ -49,7 +49,6 @@
 	
 	
 	4. UNIQUE
-	
 	- 유일하다. > 레코드간의 중복값을 가질 수 없다.
 	- null을 가질 수 있다. 식별자가 될 수  없다.
 	ex) 초등학교 교실
@@ -149,7 +148,7 @@ INSERT INTO tblMemo (seq, name, memo, regdate) VALUES (2, '홍길동', '메모�
 INSERT INTO tblMemo (seq, name, memo, regdate) VALUES (null, '홍길동', '메모입니다.', sysdate);
 
 
---테이블내에 pk가 반드시 존재?
+--테이블내에 pk가 부재
 INSERT INTO tblMemo (seq, name, memo, regdate) VALUES (1, '홍길동', '메모입니다.', sysdate);
 
 INSERT INTO tblMemo (seq, name, memo, regdate) VALUES (2, '아무개', '메모입니다.', sysdate); 

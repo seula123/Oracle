@@ -19,10 +19,13 @@
 
 UPDATE tblcountry SET population = population + 100 WHERE name = '중국';
 
-SELECT max(population) FROM tblcountry;    				--120660
-SELECT name FROM tblcountry WHERE population = 120660;  --중국
 
-SELECT name FROM tblcountry WHERE population = (SELECT max(population) FROM tblcountry);  --중국
+SELECT max(population) FROM tblcountry;
+SELECT name FROM tblcountry WHERE population = 120760;
+
+SELECT name FROM tblcountry WHERE population = max(population); --where절엔 집계함수를 쓸 수 없다
+
+SELECT name FROM tblcountry WHERE population = (SELECT max(population) FROM tblcountry); --서브쿼리 적용
 
 
 -- tblComedian. 몸무게가 가장 많이 나가는 사람의 이름?
@@ -63,6 +66,7 @@ FROM tblinsa
 	WHERE buseo = (급여가 260만원 이상 받는 직원이 근무하는 부서);
 
 
+--ORA-01427: single-row subquery returns more than one row
 SELECT 
 	*
 FROM tblinsa
@@ -77,6 +81,14 @@ FROM tblinsa
 
 
 SELECT
+   *
+FROM tblinsa
+   WHERE buseo in('총무부', '기획부');
+
+
+
+--b.
+SELECT
 *
 FROM tblinsa 
 	WHERE buseo IN (SELECT buseo FROM tblinsa WHERE basicpay >= 2600000);
@@ -87,15 +99,27 @@ FROM tblinsa
 SELECT * FROM tblinsa
 	WHERE city = '서울' AND buseo = '기획부';
 
+
+--c.
 SELECT * FROM tblinsa
 	WHERE city = (SELECT city FROM tblinsa WHERE name = '한석봉')
 		AND buseo = (SELECT buseo FROM tblinsa WHERE name = '한석봉');
 	-- where 1:1 and 1:1
 	
--- ORA-00913: too many values¶
+SELECT 
+   * 
+FROM tblinsa
+   WHERE city = (SELECT city FROM tblinsa WHERE name = '한석봉')
+         AND buseo = (SELECT buseo FROM tblinsa WHERE name = '홍길동');
+
+--ORA-00913: too many values
 SELECT * FROM tblinsa
-	WHERE (city, buseo) = (SELECT city, buseo FROM tblinsa WHERE name = '홍길동');
-	--where 2:2	
+   WHERE city = (SELECT city, buseo FROM tblinsa WHERE name = '홍길동');
+
+--where 2:2 순서, 개수 중요!
+SELECT * FROM tblinsa
+   WHERE (city, buseo) = (SELECT city, buseo FROM tblinsa WHERE name = '홍길동');
+
 
 
 -- 급여가 260만원 이상 받은 직원과 같은 부서, 같은 지역 > 지역 명단
@@ -129,7 +153,7 @@ FROM tblinsa;
 
 SELECT 
 	name, buseo, basicpay,
-		(SELECT round (avg(basicpay)) FROM tblinsa) AS avg 
+		(SELECT round (avg(basicpay)) FROM tblinsa) AS avg(평균급여)
 FROM tblinsa;
 
 
@@ -149,9 +173,7 @@ FROM tblinsa;
 
 
 
-
-
-
+--전체 평균급여가 아닌 부서별 평균급여로 변경
 SELECT 
 		name, buseo, basicpay,
 		(SELECT round (avg(basicpay)) FROM tblinsa WHERE buseo = a.buseo ) AS avg 
@@ -198,8 +220,8 @@ FROM tblmen;
  */
 
 SELECT 		
-	* 									--4번
-FROM									--1번 실행 > 테이블이없음
+	* 							--4번
+FROM								--1번 실행 > 테이블이없음
 	(
 		SELECT name, buseo 				--3번  (하나의 표가 또다른 from절에 온거라고 생각하면된다,)
 		FROM tblinsa					--2번
@@ -210,6 +232,7 @@ FROM									--1번 실행 > 테이블이없음
 --인라인뷰의 컬럼 별칭 > 바깥쪽 메인 쿼리에서 그대로 전달 + 사용
 SELECT name,gender
 FROM (SELECT name, substr(ssn, 1, 8) AS gender FROM tblinsa);
+
 
 SELECT 
 	name, height, couple,

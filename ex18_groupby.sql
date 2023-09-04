@@ -188,11 +188,10 @@ FROM tblinsa                        --1. 60명의 데이터를 가져온다.
       
       
 SELECT
-	buseo,
-	count(*)
+buseo, count(*) 
 FROM tblinsa
 	GROUP BY buseo
-	HAVING count(*) >=10;
+		HAVING count(*) >= 10; -- GROUP BY에 조건문을 사용하려면 HAVING절 사용
 
 
 -- 부서의 과장/부장(where) 인원수가 3명이 넘는(having) 결과
@@ -216,6 +215,11 @@ SELECT
 	round(avg(salary)) AS 평균급여
 FROM employees
 	GROUP BY job_id;
+
+
+SELECT
+*
+FROM tbladdressbook;
 
 
 -- 시도별 인원수?
@@ -306,15 +310,27 @@ FROM tblinsa
   	- 그룹별 중간 통계 
  */
   
- SELECT
+SELECT
 	buseo,
 	count(*),
-	SUM(basicpay),
-	round(avg(basicpay)),
-	MAX(basicpay),
-	MIN(basicpay)
+	sum(basicpay),
+	avg(basicpay),
+	max(basicpay),
+	min(basicpay)
 FROM tblinsa
-	GROUP BY cube(buseo);
+	GROUP BY CUBE(buseo);
+
+
+SELECT
+	buseo,
+	jikwi,
+	count(*),
+	sum(basicpay),
+	avg(basicpay),
+	max(basicpay),
+	min(basicpay)
+FROM tblinsa
+	GROUP BY CUBE(buseo, jikwi);
   
 
 --roll up > 다중 그룹 컬럼 > 수직관계 (전체인원 총계, 부서별 총계)

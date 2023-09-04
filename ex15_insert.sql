@@ -28,6 +28,8 @@ DROP SEQUENCE seqMemo;
 CREATE SEQUENCE seqMemo;
 
 SELECT * FROM tblMemo;
+
+
 --1. 표준 
 -- 원본 테이블의 정의된 컬럼 순서대로 컬럼리스트와 값리스트를 구성하는 방법
 -- 특별한 이유가 없으면 이 방식 사용
@@ -43,11 +45,11 @@ INSERT INTO tblMemo (seq, memo, regdate, name)
 
 
 
---3. not enough values
+-- 3. ORA-00947: not enough values 컬럼 4 값 3
 INSERT INTO tblMemo (seq, name, memo, regdate) 
             VALUES (seqMemo.nextVal, '메모입니다.', sysdate);
 
---4  too many values
+-- 4. ORA-00913: too many values 컬럼 3 값 4
 INSERT INTO tblMemo (seq, name, regdate) 
 			VALUES (seqMemo.nextVal, '홍길동', '메모입니다.', sysdate);
 		
@@ -72,6 +74,8 @@ INSERT INTO tblMemo (seq, name, memo, regdate)
 --6.c default 상수 
 INSERT INTO tblMemo (seq, name, memo, regdate) 
             VALUES (seqMemo.nextVal, default, '메모입니다.', sysdate);
+
+SELECT * FROM tblmemo;
             
 --7. 단축
 --컬럼리스트를 생략할 수 있다.
@@ -92,13 +96,13 @@ INSERT INTO tblMemo VALUES (seqMemo.nextVal, default, '메모입니다.', sysdat
 
 
 --8 
---tblMemo 테이블 > 복사 > 새테이블 생성(tblMemoCopy)
+-- tblMemo 테이블 복사 > 새 테이블 생성(tblMemoCopy) 차라리 이거 써라 9번 쓰지 말고
 
 (
  CREATE TABLE tblMemoCopy
   seq number(3) PRIMARY KEY,            --메모번호(PK)
-   name varchar2(30) DEFAULT '익명',         --작성자
-   memo varchar2(1000),                  --메모
+   name varchar2(30) DEFAULT '익명',         --작성자 (UQ)
+   memo varchar2(1000),                  --메모(NN)
    regdate DATE DEFAULT sysdate NOT null     --작성날짜
 );
 

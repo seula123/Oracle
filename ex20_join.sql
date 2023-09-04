@@ -3,9 +3,7 @@
 /*
 
 	관계형 데이터베이스 시스템이 지양하는 것들
-	 -	테이블 다시 수정해야 고쳐지는 것들 > 구조적인 문제!!
-	 
-	 
+	 -테이블 다시 수정해야 고쳐지는 것들 > 구조적인 문제!!
 	1. 테이블에 기본키가 없는 상태 > 데이터 조작 곤란
 	2. null이 많은 상태의 테이블 > 공간 낭비
 	3. 데이터가 중복되는 상태	   > 공간 낭비 + 데이터 조작 곤란
@@ -19,8 +17,15 @@ CREATE TABLE tblTest(
 	name varchar2(30) NOT NULL,
 	age NUMBER (3) NOT NULL,
 	nick varchar2(30) NOT NULL
-
 );
+
+
+-- 홍길동, 20, 강아지
+-- 아무개, 22, 바보
+-- 테스트, 20, 반장
+-- 홍길동, 20, 강아지 > 발생(X), 조작(?)
+
+
 INSERT INTO tblTest VALUES ('홍길동', 20, '강아지');
 INSERT INTO tblTest VALUES ('아무개', 22, '바보');
 INSERT INTO tblTest VALUES ('테스트', 20, '반장');
@@ -39,17 +44,23 @@ DROP TABLE tblTest;
 
 --2. null이 많은 상태의 테이블 > 공간 낭비
 
-CREATE TABLE tblTest(
-	name varchar2(30) PRIMARY KEY,
-	age NUMBER (3) NOT NULL,
+CREATE TABLE tblTest
+(
+	name varchar(30) PRIMARY KEY;
+	age number(3) NOT NULL;
 	nick varchar2(30) NOT NULL,
-	hobby varchar2(100) null
-
+	hobby1 varchar2(100) NULL,
+	hobby2 varchar2(100) NULL,
+	hobby3 varchar2(100) NULL,
+	..
+	hobby8 varchar2(100) NULL
+	
 );
+
+
 INSERT INTO tblTest VALUES ('홍길동', 20, '강아지', null);
 INSERT INTO tblTest VALUES ('아무개', 22, '고양이', '게임');
 INSERT INTO tblTest VALUES ('이순신', 24, '거북이', '수영', '활쏘기');
-
 
 
 

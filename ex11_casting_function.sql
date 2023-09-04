@@ -62,6 +62,8 @@ SELECT
    	to_char(2341234567.89, '9,999,999.9') --오류 발생!
 FROM dual;
 	FROM dual;
+/*
+
 
 	형식문자열 구성요소
 	a. yyyy
@@ -80,7 +82,6 @@ FROM dual;
 	n. ss
 	o. am(pm)
 
-/*
  	2. to_char(날짜)
  	- 날짜 > 문자
  	- char to_char(컬럼, 형식문자열)
@@ -149,12 +150,12 @@ FROM tblinsa;
 --입사 날짜? 2000년 이후인
 SELECT * FROM tblinsa WHERE ibsadate >= '2000-01-01'; --날짜 상수-> 문자열(암시적변환)
 
---입사 날짜? 2000년
+--입사 날짜? 2000년 ~ 2001년 사이
 SELECT * FROM tblinsa
 	WHERE ibsadate >= '2000-01-01' AND ibsadate <= '2000-12-31';  --오답
 	
 SELECT * FROM tblinsa 
-	WHERE ibsadate >= '2000-01-01 00:00:00' AND ibsadate <= '2000-12-31 23:59:59'; --오답
+	WHERE ibsadate >= '2000-01-01 00:00:00' AND ibsadate <= '2000-12-31 23:59:59'; --오류
 	
 SELECT * FROM tblinsa
 	WHERE to_char(ibsadate, 'yyyy') = '2000';    --이렇게쓰기
@@ -166,7 +167,7 @@ SELECT * FROM tblinsa
 SELECT
 	'123'*2,  --곱하기가 됨 암시적형변환이 되기때문에
 	to_number('123')*2  --형변환한 숫자
-FROM dual;
+FROM dual; 		    --노쓸모
 
 
 --4. date to_date(문자, 형식 문자열)

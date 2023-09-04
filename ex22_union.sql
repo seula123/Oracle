@@ -60,9 +60,15 @@ SELECT * FROM 게시판2021;
 SELECT * FROM 게시판2022;
 SELECT * FROM 게시판2023;
 
-SELECT * FROM 게시판
+SELECT * FROM 게시판2020
 UNION
-SELECT * FROM 게시판
+SELECT * FROM 게시판2021
+UNION
+SELECT * FROM 게시판2022
+UNION
+SELECT * FROM 게시판2023;
+
+--
 
 
 
@@ -88,6 +94,9 @@ INSERT INTO tblBBB VALUES ('호랑이');
 INSERT INTO tblBBB V검ALUES ('사자');
 INSERT INTO tblBBB VALUES ('코끼리');
 
+SELECT * FROM tblaaa;
+SELECT * FROM tblbbb;
+
 
 --union > 수학의 집합 > 중복 제거 
 SELECT * FROM tblaaa
@@ -102,7 +111,7 @@ SELECT * FROM tblbbb;
 
 
 
--- intersect > 교집합 
+-- intersect > 교집합 > 중복값만 출력
 SELECT * FROM tblaaa
 INTERSECT 
 SELECT * FROM tblbbb;

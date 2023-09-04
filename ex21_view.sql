@@ -8,8 +8,11 @@
 	- 가상 테이블, 뷰 테이블 등..
 	- 테이블처럼 사용한다.(***)
 	- 쿼리의 양을 줄인다.
+
 	- 정의: 쿼리(sql)을 저장하는 객체 *면접용 대답!!!!
-	- 목적: 
+	- 목적: 권한 통제
+
+
 	create [or replace] view 뷰이름
 	as
 	select 문;
@@ -21,10 +24,13 @@ CREATE OR REPLACE VIEW vwInsa
 AS 
 SELECT * FROM tblinsa;
 
-SELECT * FROM vwinsa; --tblInsa 테이블의 복사본
+SELECT * FROM vwinsa;	-- tblinsa 테이블의 복사본 > 실명뷰
+SELECT * FROM (SELECT * FROM tblinsa);	>	--익명 뷰
 
 -- '영업부' 직원  -실명뷰
 -- as밑 select를 영업부에 다시 저장 -익명뷰
+
+
 CREATE OR REPLACE VIEW 영업부
 AS 
 SELECT 
@@ -108,10 +114,12 @@ SELECT * FROM vwTodo;
 INSERT INTO vwTodo
 
 
-SELECT * FROM vwTodo;
-INSERT INTO vwTodo VALUES ((SELECT max(seq) + 1 FROM tblTodo), '할일', sysdate, NULL);
-UPDATE vwTodo SET title = '할일 완료' WHERE seq = 27;
-DELETE vwTodo WHERE seq = 27;
+SELECT * FROM vwtodo;
+INSERT INTO vwtodo VALUES ((SELECT max(seq) + 1 FROM tbltodo), '할일', sysdate, null);
+UPDATE vwtodo SET title = '할일 완료' WHERE seq = 25;
+DELETE vwtodo WHERE seq = 25;
+
+-- 복합뷰
 
 
 SELECT * FROM vwTodo;

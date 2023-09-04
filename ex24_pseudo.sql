@@ -7,12 +7,12 @@
 
 
 	rownum
-	-행번호
-	-시퀀스 객체 상관X
-	-현재 테이블의 행번호를 가져오는 역할
-	-테이블에 지정된 값이 아니ㅏㄹ, SELECT 실행시 동적으로 계산되어 만들어진다(***)
+	- 행번호
+	- 시퀀스 객체 상관X
+	- 현재 테이블의 행번호를 가져오는 역할
+	- 테이블에 저장된 값이 아니라, select 실행 시 동적으로 계산되어 만들어진다.(***)
 	- FROM 절이 실행될때 각 레포트에 ROWNUM을 할당한다.(*************)
-	-WHERE 절이 실행될 때 상황에 따라 ROWNUM이 재계산된다(****) > from 절에서 만들어진 rownum은 where절이 실행될 때 변경될 수 있다.
+	- WHERE 절이 실행될 때 상황에 따라 ROWNUM이 재계산된다(****) > from 절에서 만들어진 rownum은 where절이 실행될 때 변경될 수 있다.
 	
 ***/
 
@@ -46,7 +46,7 @@ WHERE rownum =1;			--2.조건
 
 SELECT name, buseo, rownum  --3.소비	
 FROM tblinsa				--1.생성
-WHERE rownum =3;			--2.조건
+WHERE rownum =3;			--2.조건		1이 반드시 포함?
 
 
 SELECT name, buseo, rownum  --3.소비	
@@ -63,14 +63,15 @@ ORDER BY basicpay DESC;				--2. 정렬
 
 
 --가지런하게 변경 내가 원하는 순서대로 정렬후 rownum을 할당하는 방법 > 서브쿼리 사용 (***)
-SELECT name, buseo, basicpay, rownum,rnum 
-FROM (SELECT name, buseo, basicpay,rownum AS rnum  --내가 원하는순서대로 가지런하게 정렬
+SELECT name, buseo, basicpay, rownum,rnum 	  -- 바깥의 rownum
+FROM (SELECT name, buseo, basicpay,rownum AS rnum  --내가 원하는순서대로 가지런하게 정렬 -- 안의 rownum
 FROM tblinsa						
 ORDER BY basicpay DESC)WHERE rownum <=3; -- 원하는 값 추출		
 
 
 --급여 5~10등까지 
 -- 원하는 범위 추출 (1이 포함x) > rownum 사용 불가능 
+
 --1. 내가 원하는 순서대로 정렬
 --2. 1을 서브쿼리로 묶는다 + rownum(rnum)
 --3. 2를 서브쿼리로 묶는다. + rownum(불필요)+rnum(사용***)
@@ -111,7 +112,8 @@ SELECT a.*, rownum AS rnum FROM (SELECT * FROM tbladdressbook ORDER BY name ASC)
 SELECT * FROM vwaddressbook;
 
 SELECT * FROM vwaddressbook WHERE rnum BETWEEN 1 AND 20;
-
+-- =
+SELECT * FROM (SELECT a.*, rownum AS rnum FROM (SELECT * FROM tbladdressbook ORDER BY name ASC) a) WHERE rnum BETWEEN 1 AND 20;
 
 
 

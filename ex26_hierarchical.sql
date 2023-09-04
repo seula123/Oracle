@@ -1,34 +1,35 @@
---ex26_hierarchical.sql
+-- ex26_hierarchical.sql
 
 
 /*
+ rownum
+ - 오라클 전용
+ - MS-SQL (top n)
+ - MySQL(limit n, m)
+ 
+ 
+ 계층형 쿼리, Hierarchical Query
+ - 오라클 전용 쿼리
+ - 레코드의 관계가 서로간에 상하 수직 구조인 경우에 사용
+ - 자기 참조를 하는 테이블에서 사용 > 셀프 조인
+ - 자바의 트리 구조
+ 
+ tblself
+ 홍사장
+ 	- 김부장
+ 		- 박과장
+ 			- 최대리
+ 				- 정사원
 
-	rownum
-	- 오라클 전용
-	- MS-SQL (top n)
-	- MySQL (limit n,m)
-	
-	계층형 쿼리, hierarchical Query
-	- 오라클 전용 쿼리
-	- 레코드의 관계가 서로간에 상하 수직 구조인 경우에 사용
-	- 자기 참조를 하는 테이블에서 사용 > 셀프 조인
-	- 자바의 트리구조
+- 이부장
+	- 하과장
 	
 	
-	tblSelf
-	홍사장
-		-김부장
-			-박과장
-				-최대리
-					-정사원
-		-이부장
-			-하과장
-			
-			
-			
-			
-			
-컴퓨터
+	
+	
+	
+	
+		컴퓨터
         - 본체
             - 메인보드
             - 그래픽카드
@@ -42,7 +43,7 @@
             - A4용지
             - 잉크카트리지
     
-    카테고리
+		카테고리
         - 컴퓨터용품
             - 하드웨어
             - 소프트웨어
@@ -56,8 +57,11 @@
             - 베이커리
             - 도시락
 
-*/
 
+
+
+
+ */
 SELECT * FROM tblself;
 
 
@@ -69,35 +73,30 @@ create table tblComputer (
 );
 
 
-
 insert into tblComputer values (1, '컴퓨터', 1, null);
-
 insert into tblComputer values (2, '본체', 1, 1);
 insert into tblComputer values (3, '메인보드', 1, 2);
 insert into tblComputer values (4, '그래픽카드', 1, 2);
 insert into tblComputer values (5, '랜카드', 1, 2);
 insert into tblComputer values (6, 'CPU', 1, 2);
 insert into tblComputer values (7, '메모리', 2, 2);
-
 insert into tblComputer values (8, '모니터', 1, 1);
 insert into tblComputer values (9, '보호필름', 1, 8);
 insert into tblComputer values (10, '모니터암', 1, 8);
-
 insert into tblComputer values (11, '프린터', 1, 1);
 insert into tblComputer values (12, 'A4용지', 100, 11);
 insert into tblComputer values (13, '잉크카트리지', 3, 11);
 
-
 SELECT * FROM tblComputer;
 
---부품 가져오기 + 부모 부품의 정보
+-- 부품 가져오기 + 부모 부품의 정보
 SELECT
-	c1.name AS "부품명",
-	c2.name AS "부모부품명"
+	 c1.name AS "부품명",
+	 c2.name AS "부모부품명"
 FROM tblComputer c1				--부품(자식)
-	INNER JOIN tblcomputer c2	--부모부품(부모)
+	INNER JOIN tblcomputer c2	--부품(부모)
 		ON c1.pseq = c2.seq;
-		
+	
 	
 -- 계층형 쿼리
 -- 1. start with절 + connect by 절
@@ -199,4 +198,5 @@ FROM tblcategorybig b
 				ON m.seq = s.pseq;
 	
 	
+
 
