@@ -799,16 +799,51 @@ end;
 
 
 -- 예외처리
-
--- : 실행부에서 (being - end) 발생하는 예외를 처리하는 블럭 > exception 블럭
-
+-- : 실행부에서(begin-end) 발생하는 예외를 처리하는 블럭 > exception 블럭
 
 declare
-    vname varchar2(15);
-begin
-    select name into vname from tblInsa where num = 1001;
+    vname varchar2(5);
+begin 
+    dbms_output.put_line('하나');
+    select name into vname from tblinsa where num = 1001;
+    dbms_output.put_line('둘');
     
     dbms_output.put_line(vname);
+exception
+
+    when others then
+        dbms_output.put_line('예외 처리');
+
+end;
+
+
+-- 예외 발생 > DB 저장
+create table tblLog (
+    seq number primary key,         --pk
+    code varchar2 (7) not null check (code in ('A001','B001','B002','C001')), --에러 상태 코드
+    message varchar2(1000) not null,      --에러 메시지
+    regdate date default sysdate not null --에러 발생 시각
+);
+
+
+create sequence seqLog;
+
+declare
+    vcnt number;
+    vname tblInsa.name%type;
+begin
+    select count(*) into vcnt from tblCountry --where name = '태국';
+    
+    dbms_output.put_line(100/vcnt);
+
+    select name into vname from tblInsa where num = 1001;
+    dbms_output.put_line(vname);
+
+--exception 
+    
+    when zero_divide then
+    dbms_output.put_line('0으로 나누기');
+    
 end;
 
 
@@ -816,16 +851,46 @@ end;
 
 
 
+create sequence seqLog;
+
+declare
+    vcnt number;
+    vname tblinsa.name%type;
+begin 
+
+select count(*) into vcnt from tblcountry; --where name = '태국';
+dbms_output.put_line(100 / vcnt);
+
+select name into vname from tblinsa where num = 1000;
+dbms_output.put_line(vname);
+
+exception
+    
+    when zero_divide then
+        dbms_output.put_line('0으로 나누기');
+        insert into tblLog 
+            values (seqLog.nextVal, 'B001', '가져온 레코드가 없습니다.',default);
+        
+    when no_data_found then
+        dbms_output.put_line('데이터 없음');
+        insert into tblLog 
+            values (seqLog.nextVal, 'A001', '직원이 존재하지 않습니다.',default);
+    
+    
+    when others then
+        dbms_output.put_line('나머지 예외');
+        insert into tblLog 
+            values (seqLog.nextVal, 'C001', '기타 예외가 발생했습니다.',default);
 
 
+end;
 
 
+select * from tblLog;
 
+-- ~ 익명 프로시저
 
-
-
-
-
+-- 실명 프로시저 ~
 
 
 
