@@ -892,85 +892,491 @@ select * from tblLog;
 
 -- 실명 프로시저 ~
 
+/*
+
+
+명령어 실행 > 처리 과정
+
+1. ANSI-SQL
+
+2. 익명 프로시저
+
+	a. 클라이언트 > 구문 작성 (select)
+	b. 실행 (Ctrl + Enter)
+	c. 명령어를 오라클 서버에 전달
+	d. 서버가 명령어를 수신
+	e. 구문 분석 (파싱) + 문법 검사
+	f. 컴파일
+	g. 실행(select)
+	h. 결과셋 도출
+	i. 결과셋을 클라이언트에게 반환
+	j. 결과셋을 화면에 출력
+	
+2-1 다시 실행
+	a~z 다시 반복
+	- 한 번 실행했던 명령어를 다시 실행 했을 때 위의 모든 과정을 처음부터 끝까지 다시실행한다.
+	- 첫번째 실행 비용 = 다시 실행 비용
+	b.
+	c.
+	
+	
+3. 실명 프로시저
+    --메서드 생성
+    a. 클라이언트 > 구문 작성 > 필수 
+	b. 실행 (Ctrl + Enter)
+	c. 명령어를 오라클 서버에 전달
+	d. 서버가 명령어를 수신
+	e. 구문 분석 (파싱) + 문법 검사
+	f. 컴파일
+    g. 실행
+    h. 오라클 서버 > 프로시저 생성 > 저장
+    i. 저장
+
+    --실행
+    a. 클라이언트 > 구문 작성 (호출)
+    b. 실행 (Ctrl + Enter)
+	c. 명령어를 오라클 서버에 전달
+	d. 서버가 명령어를 수신
+	e. 구문 분석 (파싱) + 문법 검사
+	f. 컴파일
+    g. 실행 >프로시저 실행
+    
+    
+    4. 다시 실행
+    a. 클라이언트 > 구문 작성 (호출)
+    b. 실행 (Ctrl + Enter)
+	c. 명령어를 오라클 서버에 전달
+	d. 서버가 명령어를 수신
+	e. 구문 분석 (파싱) + 문법 검사
+	f. 컴파일
+    g. 실행 >프로시저 실행
+    
+    
+    
+    
+    
+    
+    
+    
+*/
+
+SELECT * FROM tblinsa;
+
+
+
+
+/*
+  프로시저
+  1. 익명 프로시저
+  	- 1회용
+  
+  2. 실명 프로시저
+  	- 재사용
+  	- 오라클에 저장
+  	
+  	
+  실명 프로시저
+  	- 저장 프로시저(Stroed Procedure)
+	1. 저장 프로시저, Stroed Procedure
+		- 매개변수 / 반환값 구성 > 자유
+	2. 저장 함수, Stroed Function
+		- 매개변수 / 반환값 구성 > 필수
+		
+
+	익명 프로시저 선언
+	[declare
+		변수 선언;
+		커서 선언;]
+	begin
+		구현부;
+	[exception
+		예외처리;]
+	end;
+	
+	
+	
+	저장 프로시저 선언
+	
+	
+	create [or replace] procedure 프로시저명
+	is(as) --이건 생략 불가능
+		[변수 선언;
+		커서 선언;]
+	begin
+		구현부;
+	[exception
+		예외처리;]
+	end;
+		
+		  
+ */
 
+--즉시 실행
+DECLARE
+	vnum NUMBER;
+BEGIN
+	vnum :=100;
+	dbms_output.put_line(vnum);
+END;
 
 
 
 
+--저장 프로시저
+create or replace procedure procTest
+is
+	vnum NUMBER;
+BEGIN
+	vnum :=100;
+	dbms_output.put_line(vnum);
+END;
 
 
+-- 저장 프로시저를 호출하는 방법
+begin
+    procTest;   --프로시저 호출
+end;
 
 
+--저장 프로시저 = 메서드
+-- 매개변수 + 반환값
 
+--1. 매개변수가 있는 프로시저
+create or replace procedure procTest(pnum number)  --매개변수
+is
+    vresult number; --일반변수
+begin
+    vresult := pnum *2;
+    dbms_output.put_line(vresult);
+end procTest;
 
 
+set serveroutput on;
 
+begin
+    -- pl/sql 영역
+    procTest(100);
+    procTest(200);
+    procTest(300);
+end;
 
 
+--  무슨 영역?
+--  ANSI-SQL  영역
+select * from tblInsa;
 
+execute procTest(400);
+exec procTest(500);
+call procTest(600);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+create or replace procedure procTest(width number, height number)
+is
+    vresult number;
+begin 
+    vresult := width * height;
+    dbms_output.put_line(vresult);
+end procTest;
+
+
+begin
+    procTest(10,20);
+end;
+
+
+CREATE OR REPLACE procedure procTest(
+    name varchar2--(30) > *** 프로시저 매개변수는 길이와 not null 표현은 불가능하다.
+) 
+is --변수 선언이 없어도 반드시 기재
+begin
+    dbms_output.put_line('안녕하세요.' || name || '님');
+end procTest;
+/
+
+
+
+begin
+    procTest('홍길동');
+end;
+/
+
+
+
+
+
+
+create or replace procedure procTest(
+    width number, 
+    height number default 10)
+is
+    vresult number;
+begin 
+    vresult := width * height;
+    dbms_output.put_line(vresult);
+end procTest;
+
+
+begin
+    --procTest(10,20);  --width(10), height(10)
+    procTest(10);     -- width(10), height(10-default)
+end;
+
+
+/* 
+
+    매개변수 모드
+    - 매개변수가 값을 전달하는 방식
+    - CALL BY Value
+    - Call by Reference
+    - Call by Reference > 매개변수 > 참조값(주소)를 넘기는 방식( 참조형 인자)    
+    
+    
+    1. in 모드 > 기본
+    2. out 모드
+    3. in out 모드(x)
+
+
+*/
+
+
+create or replace procedure procTest(
+    pnum1 in number,       --in parameter//인자값
+    pnum2 in number,       
+    presult out number, --out parameter//반환값 역할
+    presult2 out number,
+    presult3 out number 
+)
+is 
+begin
+    presult := pnum1 + pnum2;
+    presult2 := pnum1 - pnum2;
+    presult3 := pnum1 * pnum2;
+end procTest;
+
+
+declare
+    vnum number;
+    vnum2 number;
+    vnum3 number;
+begin
+    procTest(10,20,vnum,vnum2,vnum3);
+    dbms_output.put_line(vnum);
+    dbms_output.put_line(vnum2);
+    dbms_output.put_line(vnum3);
+end;
+
+
+--문제
+-- 1. 부서 전달(인자값으로) > 해당 부서의 직원중 급여를 가장 많이 받는 사람의 번호를 반환(out)하세요 >출력
+--      in 1개 + out 1개
+
+-- 2. 직원 번호 전달(인자) > 직원과 같은 지역에 사는 직원의 수? , 같은 직위의 직원수? 해당 직원보다 급여를 더 많이 받는 직원수? 반환
+--  in 1개 + out 3개
+create or replace procedure procTest1(
+    pbuseo in varchar2,
+    pnum out number
+)
+is
+begin
+    select num into pnum from tblinsa
+        where basicpay = (select max(basicpay) from tblinsa where buseo = pbuseo)
+            and buseo = pbuseo;
+end procTest1;
+/
+
+declare
+    vnum number; -- out에게 넘길 변수
+begin
+    procTest1('기획부', vnum);
+    dbms_output.put_line(vnum);
+end;
+/
+
+
+
+
+create or replace procedure procTest2(
+    pnum in number, --직원 번호
+    pcnt1 out number,
+    pcnt2 out number,
+    pcnt3 out number
+)
+is
+begin
+    -- 2. 직원번호를 전달(인자) 후 같은 지역에 사는 직원수?, 같은 직위의 직원수?, 해당 직원보다 급여를 더 많이 받는 직원수? 반환
+    select count(*) into pcnt1 from tblinsa 
+        where city = (select city from tblinsa where num = pnum);
+    select count(*) into pcnt2 from tblinsa 
+        where jikwi = (select jikwi from tblinsa where num = pnum);
+    select count(*) into pcnt3 from tblinsa 
+        where basicpay > (select basicpay from tblinsa where num = pnum);
+end procTest2;
+/
+/
+declare
+    vnum number;
+    vcnt1 number;
+    vcnt2 number;
+    vcnt3 number;
+begin
+    --개발부에서 가장 많은 급여를 받는 사람과 같은 지역에 사는 직원수?, 같은 직위의 직원수?, 해당 직원보다 급여를 더 많이 받는 직원수?
+    procTest1('개발부', vnum);
+    
+    procTest2(vnum, vcnt1, vcnt2, vcnt3);
+    dbms_output.put_line(vcnt1);
+    dbms_output.put_line(vcnt2);
+    dbms_output.put_line(vcnt3);
+end;
+/
+
+
+CREATE TABLE tblStaff(            
+   seq NUMBER PRIMARY KEY,         --직원번호(PK)
+   name varchar2(30) NOT NULL,      --직원명
+   salary NUMBER NOT NULL,         --급여
+   address varchar2(300) NOT NULL,   --거주지
+   project varchar2(300)         --담당프로젝트
+);
+
+
+CREATE TABLE tblProject(
+   seq NUMBER PRIMARY KEY,         --프로젝트 번호(PK)
+   project varchar2(100) NOT NULL,   --프로젝트명
+   --staff_seq NUMBER NOT NULL      --담당 직원 번호(위 테이블과 참조하는 코드)
+   staff_seq NUMBER NOT NULL REFERENCES tblStaff(seq)   --담당 직원 번호(FK)
+); --자식 테이블
+
+
+select * from tblstaff;
+select * from tblproject;
+
+delete from tblstaff;
+delete from tblProject;
+
+
+
+INSERT INTO tblStaff (seq, name, salary, address) VALUES (1, '홍길동', 300, '서울시');
+INSERT INTO tblStaff (seq, name, salary, address) VALUES (2, '아무개', 250, '인천시');
+INSERT INTO tblStaff (seq, name, salary, address) VALUES (3, '하하하', 250, '부산시');
+
+INSERT INTO tblProject (seq, project, staff_seq) VALUES (1, '홍콩 수출', 1); --홍길동
+INSERT INTO tblProject (seq, project, staff_seq) VALUES (2, 'TV 광고', 2); --아무개
+INSERT INTO tblProject (seq, project, staff_seq) VALUES (3, '매출 분석', 3); --하하하
+INSERT INTO tblProject (seq, project, staff_seq) VALUES (4, '노조 협상', 1); --홍길동
+INSERT INTO tblProject (seq, project, staff_seq) VALUES (5, '대리점 분양', 2); --아무개
+
+commit;
+
+CREATE OR REPLACE PROCEDURE procDeleteStaff(
+   pseq NUMBER,         -- 퇴사 할 직원 번호
+   pstaff NUMBER,         -- 위임받을 직원번호
+   presult OUT NUMBER      -- 성공(1) OR 실패(0) > 피드백
+)
+IS
+   vcnt NUMBER; -- 퇴사 직원의 담당 프로젝트 개수
+BEGIN
+   
+   --1. 퇴사 직원이 담당 프로젝트가 있는지?
+   SELECT count(*) INTO vcnt FROM tblproject WHERE staff_seq = pseq;
+
+   --2. 조건 > 위임 유무 결정
+   IF vcnt > 0 THEN
+      --3. 위임
+      UPDATE tblproject SET staff_seq = pstaff WHERE staff_seq = pseq;
+   ELSE 
+      --3. 아무것도 안 함
+      NULL; -- 이 조건의 else절에는 아무것도 하지 마시오!! > 개발자의 의도 표현
+   END IF;
+
+   --4. 퇴사
+   DELETE FROM tblstaff WHERE seq = pseq;
+
+   --5. 피드백 > 성공
+   presult := 1;
+
+EXCEPTION
+   WHEN OTHERS THEN 
+      presult := 0;
+      
+   
+   
+END procDeleteStaff;
+
+
+
+declare 
+   vresult NUMBER;
+begin
+   procDeleteStaff(1, 2, vresult);
+   IF vresult = 1 THEN
+   dbms_output.put_line('퇴사 성공');
+   else
+   dbms_output.put_line('퇴사 실패');
+   END IF;
+END ;
+
+
+select * from tblStaff;
+
+select * from tblProject;
+
+
+insert into tblStaff values (4, '호호호', 200, '서울시');
+
+
+
+
+
+
+--위임받을 직원 > 현재 프로젝트를 가장 적게 담당 직원에게 자동으로 위임
+-- 동률 > rownum = 1
+
+CREATE OR REPLACE PROCEDURE procDeleteStaff(
+   pseq NUMBER,         -- 퇴사 할 직원 번호
+   presult OUT NUMBER      -- 성공(1) OR 실패(0) > 피드백
+)
+IS
+   vcnt NUMBER; -- 퇴사 직원의 담당 프로젝트 개수
+   vstaff_seq number; --담당 프로젝트가 가장 적은 직원 번호
+BEGIN
+   
+   --1. 퇴사 직원이 담당 프로젝트가 있는지?
+   SELECT count(*) INTO vcnt FROM tblproject WHERE staff_seq = pseq;
+
+   --2. 조건 > 위임 유무 결정
+   IF vcnt > 0 THEN
+   
+      --2.5 적게 맡고 있는 직원 번호?
+      select 
+        staff_seq,
+        count(*)
+      from tblStaff s
+        left outer join tblProject p
+            on s.seq = p.staff_seq
+                group by staff_seq;
+      
+      
+      --3. 위임
+      UPDATE tblproject SET staff_seq = pstaff WHERE staff_seq = pseq;
+   ELSE 
+      --3. 아무것도 안 함
+      NULL; -- 이 조건의 else절에는 아무것도 하지 마시오!! > 개발자의 의도 표현
+   END IF;
+
+   --4. 퇴사
+   DELETE FROM tblstaff WHERE seq = pseq;
+
+   --5. 피드백 > 성공
+   presult := 1;
+
+EXCEPTION
+   WHEN OTHERS THEN 
+      presult := 0;
+      
+   
+   
+END procDeleteStaff;
 
 
 
