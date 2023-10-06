@@ -582,7 +582,7 @@ begin
 
     for i in reverse 1..10 loop
     dbms_output.put_line(i);  
-    end loop;
+    end loop;ㅅ
 
 end;
 
@@ -1605,7 +1605,7 @@ from tblLogDiary;
         
         update
         - :old > 수정되기 전 행
-        - :new > 수정된   후 행
+        - :new > 수정된   후 행f
         
         delete
         - :old > > 삭제되기 전 행
@@ -1638,7 +1638,7 @@ INSERT INTO tblmen VALUES ('하하하', 27, NULL, 80, NULL);
 INSERT INTO tblmen VALUES ('무명씨', 21, 177, 72, NULL);
 INSERT INTO tblmen VALUES ('정형돈', 28, NULL, 92, NULL);
 INSERT INTO tblmen VALUES ('양세형', 22, 166, 55, '김민경');
-INSERT INTO tblmen VALUES ('조세호', 24, 165, 58, '오나미');
+INSERT INTO tblmen VALUES ('조세호', 24, 165ㅋ, 58, '오나미');
 
 
 create or replace trigger tblMen
@@ -1814,9 +1814,414 @@ select * from tblBoard;
 
 
 
+/*
+    함수 return
+    
+    1.단일값o
+    2. 다중값 x > cursor
+
+    프로시저 out parameter
+    1. 단일값(단일 레코드)
+        a. number
+        b. varchar2
+        c. date
+        
+        
+    2. 다중값 (다중 레코드)
+        a. cursor
+    
+
+*/
+
+create or replace procedure procBuseo (
+    pbuseo varchar2
+)
+is 
+    cursor vcursor
+    is
+    select * from tblInsa where buseo = pbuseo;
+    
+    vrow tblInsa%rowtype;
+
+begin
+    
+    open vcursor;
+    loop
+        fetch vcursor into vrow;    --select into
+        exit when vcursor%notfound;
+        
+        --업무
+        dbms_output.put_line(vrow.name || ','|| vrow.buseo);
+        
+    end loop;
+    close vcursor;
+
+
+end procBuseo;
+
+set serveroutput on;
+
+begin
+    procBuseo('영업부');
+end;
+
+
+
+
+-- 다중 값
+create or replace procedure procBuseo(
+    pbuseo in varchar2,
+    pcursor out sys_refcursor --커서의 자료형
+)
+is
+    --cursor vcursor is select..
+begin
+    open pcursor
+    for
+    select * from tblInsa where buseo = pbuseo;
+end procBuseo;
+/
+
+declare
+    vcursor sys_refcursor; --커서 참조 변수
+    vrow tblInsa%rowtype;
+begin
+    procBuseo('영업부', vcursor);
+    
+    --소비
+    loop
+        fetch vcursor into vrow;
+        exit when vcursor%notfound;
+        
+        --업무
+        dbms_output.put_line(vrow.name);
+    end loop;
+end;
+/
+
+
+--프로시저 총정리 > CRUD
+
+--1. 추가 작업(C)
+create or replace procedure 추가 작업 (
+    추가할 데이터 -> in 매개변수,
+    추가할 데이터 -> in 매개변수,
+    추가할 데이터 -> in 매개변수, --원하는 만큼
+    성공 유무 반환 -> out 매개변수 --피드백(1,0)
+)
+is
+    내부 변수 선언
+begin
+    작업(insert + (selecte,update,delete))
+exception
+    when others then
+    예외처리
+end;
+
+
+
+select * from tblTodo;
+
+
+--할일 추가하기 (c)
+create or replace procedure procAddTodo (
+    ptitle varchar2, 
+    presult out number -- 1 or 0
+)
+is
+begin
+    insert into tblTodo (seq, title ,adddate, completedate)
+        values (seqTodo.nextVal, ptitle, sysdate, null);
+        
+    presult := 1; --성공
+exception
+    when others then
+        presult := 0; --실패
+end procAddTodo;
+/
+
+select * from tblTodo;  --22
+
+create sequence seqTodo start with 23;
+
+
+declare
+    vresult number;
+begin
+    procAddTodo('새로운 할일입니다.', vresult);
+    dbms_output.put_line(vresult);
+end;
+
+select * from tblTodo;
+
+
+--2.수정 작업
+create or replace procedure procAddTodo 수정작업 (
+    수정할 데이터 -> in 매개변수,
+    수정할 데이터 -> in 매개변수,
+    수정할 데이터 -> in 매개변수, --원하는 개수
+    식별자        -> in 매개변수,  --where 절에 사용할 pk or 데이터
+    성공 유무 반환 -> out 매개변수    --피드백 (1,0)
+)
+is
+    내부 변수 선언
+begin
+    작업 (update + (insert,update, delete, select...))
+exception
+    when others then
+    예외처리
+end;
+
+
+-- 할일 수정하기(u) > completedate 채우기 > 할 일 완료 처리하기 -1번에 넣은 데이터 null에서 날짜 수정 작업
+
+create or replace procedure proCompleteTodo(
+    -- procmpletedate date > 수정할 날짜 > 지금 > sysdate 처리
+    pseq in number, --수정할 할일 번호
+    presult out number
+)
+is
+
+begin
+    update TBLTODO set
+         COMPLETEDATE = sysdate where SEQ = pseq;
+    presult :=1;
+    exception
+when others then
+    presult := 0;
+end;
+
+    declare
+        vresult number;
+        begin
+        proCompleteTodo(27,vresult);
+        DBMS_OUTPUT.PUT_LINE(vresult);
+    end;
+
+select * from TBLTODO;
+
+
+
+--3. 삭제작업(D)
+create or replace procedure 삭제작업 (
+    식별자         -> in 매개변수,
+    성공 유무 반환 -> out 매개변수
+    
+    
+)
+is
+    내부 변수 선언
+begin
+    작업 (delete + (insert, update, delete, select))
+exception
+    when others then
+        예외처리
+end;
+
+
+--할일 삭제하기
+create or replace procedure procDeleteTodo (
+    pseq in number,
+    presult out number
+)
+is
+begin
+    delete from tblTodo where seq = pseq;
+    presult := 1;
+exception
+    when others then
+        presult :=0;
+end procDeleteTodo;
+
+
+declare
+    vresult number;
+begin
+    procDeleteTodo(24,vresult);
+    dbms_output.put_line(vresult);
+end;
+
+select * from tblTodo;
+
+--4. 읽기 작업 (R)
+
+--: 조건 유/무
+--: 반환 단일행/다중행, 단일컬럼/ 다중컬럼
+
+-- 한 일 몇 개 ? 안 한 일 몇 개 ? 총 몇 개?
+create or replace procedure 읽기작업 (
+    조건 데이터 -> int 매개변수,
+    단일 반환값 -> out 매개변수,
+    다중 반환값 -> out 매개변수 (커서)
+)
+is
+    내부 변수 선언
+begin
+    작업(select + (insert,updaate,delete, select))
+exception
+    when others then 
+        예외처리
+end;
+
+-- 한 일 몇 개 ? 안 한 일 몇 개 ? 총 몇 개?
+create or replace procedure procCountTodo (
+    pcount1 out number, --한 일
+    pcount2 out number, --  안 한일
+    pcount3 out number  --모든일
+)
+is
+begin
+    select count(*) into pcount1 from tblTodo where completedate is not null;
+        select count(*) into pcount2 from tblTodo where completedate is null;
+            select count(*) into pcount3 from tblTodo;
+exception
+    when others then
+        dbms_output.put_line('예외 처리');
+end procCountTodo;
+
+declare
+    vcount1 number;
+    vcount2 number;
+    vcount3 number;
+begin
+    procCountTodo (vcount1,vcount2,vcount3);
+    dbms_output.put_line(vcount1);
+    dbms_output.put_line(vcount2);
+    dbms_output.put_line(vcount3);
+end;
 
 
 
 
 
 
+create or replace procedure procCountTodo (
+    psel in number,  --선택(1(한일), 2(안한일), 3(모든일))
+    pcount out number
+)
+is
+begin
+    if psel = 1 then
+    select count(*) into pcount1 from tblTodo where completedate is not null;
+    if psel = 2 then
+    select count(*) into pcount2 from tblTodo where completedate is null;
+    if psel = 3 then
+    select count(*) into pcount3 from tblTodo;
+    end if;
+    
+exception
+    when others then
+        dbms_output.put_line('예외 처리');
+end procCountTodo;
+
+declare
+    vcount1 number;
+    vcount2 number;
+    vcount3 number;
+begin
+    procCountTodo (vcount1,vcount2,vcount3);
+    dbms_output.put_line(vcount1);
+    dbms_output.put_line(vcount2);
+    dbms_output.put_line(vcount3);
+end;
+
+
+
+
+
+
+create or replace procedure procCountTodo (
+    psel in number,  --선택(1(한일), 2(안한일), 3(모든일))
+    pcount out number
+)
+is
+begin
+    if psel = 1 then
+    select count(*) into pcount1 from tblTodo where completedate is not null;
+    if psel = 2 then
+    select count(*) into pcount2 from tblTodo where completedate is null;
+    if psel = 3 then
+    select count(*) into pcount3 from tblTodo;
+    end if;
+    
+exception
+    when others then
+        dbms_output.put_line('예외 처리');
+end procCountTodo;
+
+declare
+    vcount number;
+begin
+    procCountTodo(2,vcount);
+    dbms_output.put_line(vcount);
+end;
+
+
+--번호 > 할 일 1개 반환
+create or replace procedure procGetTodo (
+    pseq in NUMBER,
+    prow OUT tblTodo%rowtype
+)
+IS
+BEGIN
+		SELECT * INTO prow FROM tbltodo WHERE seq = pseq;
+
+EXCEPTION 
+	WHEN OTHERS THEN
+		dbms_output.put_line('예외처리');
+END;
+
+
+declare
+	vrow tblTodo%rowtype;
+begin
+	procGetTodo(1,vrow);
+	dbms_output.put_line(vrow.title);
+end;
+
+
+
+--전체 레코드 반홪
+
+--1. 한 일 목록 반환
+--2. 안 한 일 목록 반환
+--3. 모든 일 목록 반환
+
+create or replace procedure procListTodo (
+    psel in number,
+    pcursor out sys_refcursor   
+)
+is
+begin
+    if psel = 1 then
+        open pcursor
+        for
+        select * from tblTodo where completedate is not null;   -- 완료
+    elsif psel = 2 then
+        open pcursor
+        for
+        select * from tblTodo where completedate is null;       -- 미완료
+    elsif psel = 3 then
+        open pcursor
+        for
+        select * from tblTodo;                                  -- 모든일
+    end if;
+exception
+    when others then
+        dbms_output.put_line('예외처리');
+end procListTodo;
+
+
+declare
+	vcursor sys_refcursor;
+	vrow tblTodo%rowtype;
+begin
+	procListTodo(1, vcursor);
+
+	LOOP
+		FETCH vcursor INTO vrow;
+		EXIT WHEN vcursor%notfound;
+	
+	dbms_output.put_line(vrow.title || ',' || vrow.completedate);
+	END LOOP;
+end;
